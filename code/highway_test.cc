@@ -26,7 +26,7 @@
 //#define THRESHOLD 0.75
 #define MIN_INI 30
 #define IMG_RS 0
-#define RS_32 0
+#define RS_32 1
 #define SV_IMG 0
 using namespace std;
 using namespace cv;
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 						"../model/step2.prototxt",
 						"../model/step3.prototxt",
 						"../model/model_2ms.prototxt",
-						"../model/face.prototxt"											
+						"../model/model_2ms.prototxt"											
 		};
 
 		string cm[5] = {
@@ -65,14 +65,15 @@ int main(int argc, char **argv)
 						"../model/step2.caffemodel",
 						"../model/step3.caffemodel",
 						"../model/model_2ms.caffemodel",
-						"../model/face.caffemodel"
+						"../model/model_2ms.caffemodel"
 						
 		};
   ::google::InitGoogleLogging(" ");
 	vector<string> model_file(pt, pt + 5);
 	vector<string> trained_file(cm, cm + 5);
 	FACE face_net(model_file, trained_file);
-
+	InsightFace *insight_net = InsightFace::GetInstance();
+    cout<<"load model successful"<<endl;
   //  }
   //  else{
   //      string model_file   ="../model/crypt_model";
@@ -258,10 +259,11 @@ int main(int argc, char **argv)
 						struct timeval t1,t2;
 						double timeuse;
 						if(RS_32 ){
-							resize(crop_a_faces[0],temp_crop,cv::Size(32,32));
+							//resize(crop_a_faces[0],temp_crop,cv::Size(32,32));
+							temp_crop = crop_a_faces[0];
 							gettimeofday(&t1,NULL);
 							//face_net.extractFeature(temp_crop,sel_model,feature_a1);
-							InsightFace::GetInstance()->ExtractFeatures(temp_crop,feature_a1);
+							insight_net->ExtractFeatures(temp_crop,feature_a1);
 							gettimeofday(&t2,NULL);
 							if(SV_IMG){
 						    SaveImage(img_dir_save,id_name,temp_crop);}}
@@ -340,10 +342,11 @@ int main(int argc, char **argv)
 						    double timeuse2;
 							  for(int k=0;k<crop_b_faces.size();k++){
 									if(RS_32){
-									resize(crop_b_faces[k],temp_crop,cv::Size(32,32));
+									//resize(crop_b_faces[k],temp_crop,cv::Size(32,32));
+									temp_crop = crop_b_faces[k];
 									gettimeofday(&t3,NULL);
 									//face_net.extractFeature(temp_crop,sel_model,feature_b1);
-									InsightFace::GetInstance()->ExtractFeatures(temp_crop,feature_b1);
+									insight_net->ExtractFeatures(temp_crop,feature_b1);
 									gettimeofday(&t4,NULL);
 									}
 									else{
@@ -386,7 +389,7 @@ int main(int argc, char **argv)
 					//for(int k=0;k<feature_b1_vec.size();k++){
 						for(int k=0;k<1;k++){
 					  //face_net.calculateDistance(feature_a1,feature_b1_vec[k],sel_model,Euclidean_distance1);
-						InsightFace::GetInstance()->CalculateDistance(feature_a1, feature_b1_vec[k], Euclidean_distance1);
+						insight_net->CalculateDistance(feature_a1, feature_b1_vec[k], Euclidean_distance1);
 					 // face_net.calculateDistance(feature_a2,feature_b2_vec[k],4,Euclidean_distance2);
 					 // Euclidean_distance=0.85*Euclidean_distance1+1.15*Euclidean_distance2;
 					 output_file<<id_name <<"\t"<<name_list[j]<<"\t"<<Euclidean_distance1<<endl;

@@ -28,9 +28,11 @@ int InsightFace::Init()
         Caffe::set_mode(Caffe::GPU);
     #endif
     //prototxt saved path
-    std::string prototxt_fil = "../model/model_15ms.prototxt";
-    std::string model_file = "../model/model_15ms.caffemodel";
+    std::string prototxt_fil = "../model/model_2ms.prototxt";
+    std::string model_file = "../model/model_2ms.caffemodel";
     //Caffe::set_mode(Caffe::GPU);
+    std::cout<<"model prototxt: "<<prototxt_fil<<std::endl;
+    std::cout<<"model caffemodel: "<<model_file<<std::endl;
     boost::shared_ptr<Net<float> > net;
     Phase phase = TEST;
     net.reset(new Net<float>(prototxt_fil, phase));
